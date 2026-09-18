@@ -72,4 +72,7 @@ def sample():
     text='location,recorded_at,ph,turbidity,dissolved_oxygen\nPeriyar River - Station 01,2026-09-16 09:00,7.1,4.0,6.8\nVembanad Lake - Station 02,2026-09-16 10:00,8.7,8.1,4.4\n'
     return app.response_class(text,mimetype='text/csv',headers={'Content-Disposition':'attachment; filename=sample_water_data.csv'})
 
-if __name__=='__main__': init_db(); app.run(debug=True)
+init_db()
+
+if __name__ == "__main__":
+    app.run(debug=True)
