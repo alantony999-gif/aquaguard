@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="hero">
+    <div>
+        <p class="eyebrow">SC-06 • WATER AND COAST</p>
+        <h1>Know your water use. Spot possible leaks early.</h1>
+        <p>
+            AquaGuard converts household flow readings into water-consumption estimates
+            and flags suspicious continuous-use patterns.
+        </p>
+    </div>
+    <a class="button" href="{{ url_for('add_reading') }}">+ Add Water Usage</a>
+</section>
+
+<section class="stats-grid">
+    <div class="stat-card">
+        <span>Total recorded consumption</span>
+        <strong>{{ total_consumption }} L</strong>
+    </div>
+    <div class="stat-card">
+        <span>Possible leak events</span>
+        <strong class="danger">{{ leak_events }}</strong>
+    </div>
+    <div class="stat-card">
+        <span>Estimated potential wastage</span>
+        <strong class="warning-text">{{ estimated_wastage }} L</strong>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="panel-heading">
+        <div>
+            <h2>Water-use trend</h2>
+            <p class="muted">Consumption calculated as flow rate × duration.</p>
+        </div>
+    </div>
+    <canvas id="usageChart"></canvas>
+</section>
+
+<section class="panel">
+    <div class="panel-heading">
+        <div>
+            <h2>Recent household readings</h2>
+            <p class="muted">Transparent, explainable rule-based analysis.</p>
+        </div>
+        <a href="{{ url_for('add_reading') }}">Add reading</a>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Household</th>
+                    <th>Date/time</th>
+                    <th>Flow (L/min)</th>
+                    <th>Duration (min)</th>
+                    <th>Consumption (L)</th>
+                    <th>Status</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in readings %}
+                <tr>
+                    <td>{{ row.household }}</td>
+                    <td>{{ row.recorded_at }}</td>
+                    <td>{{ row.flow_rate }}</td>
+                    <td>{{ row.duration }}</td>
+                    <td>{{ row.consumption }}</td>
+                    <td>
+                        <span class="status {{ 'risk' if row.status == 'LEAK RISK' else 'normal' }}">
+                            {{ row.status }}
+                        </span>
+                    </td>
+                    <td>{{ row.reason }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7">No readings available.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="note-card">
+    <strong>Prototype note:</strong>
+    Leak rules and wastage estimates are demonstration logic for the selection prototype.
+    Real deployment would require validated sensor data and calibrated plumbing rules.
+</section>
+
+<script>
+const data = {{ chart_data|tojson }};
+const labels = data.map(row => `${row.household} • ${row.recorded_at}`);
+
+new Chart(document.getElementById("usageChart"), {
+    type: "bar",
+    data: {
+        labels: labels,
+        datasets: [
+            {
+                label: "Consumption (L)",
+                data: data.map(row => row.consumption)
+            },
+            {
+                label: "Flow rate (L/min)",
+                data: data.map(row => row.flow_rate),
+                type: "line",
+                tension: 0.25
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        interaction: { mode: "index", intersect: false },
+        scales: { y: { beginAtZero: true } }
+    }
+});
+</script>
+
+{% endblock %}

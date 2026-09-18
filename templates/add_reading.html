@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="panel narrow">
+    <p class="eyebrow">NEW HOUSEHOLD READING</p>
+    <h1>Add Water Usage</h1>
+    <p class="muted">
+        Enter a flow rate and how long the water continued flowing.
+        AquaGuard calculates consumption automatically.
+    </p>
+
+    <form method="post" class="form-grid">
+        <label>
+            Household / Meter name
+            <input name="household" placeholder="House A" required>
+        </label>
+
+        <label>
+            Date and time
+            <input name="recorded_at" placeholder="2026-09-18 20:30" required>
+        </label>
+
+        <label>
+            Flow rate (litres/minute)
+            <input type="number" name="flow_rate" min="0" step="0.1" placeholder="0.8" required>
+        </label>
+
+        <label>
+            Flow duration (minutes)
+            <input type="number" name="duration" min="0.1" step="0.1" placeholder="90" required>
+        </label>
+
+        <button class="button" type="submit">Analyze & Save</button>
+    </form>
+
+    <div class="logic-box">
+        <strong>Current demo logic</strong>
+        <p>Possible leak if flow ≥ 0.5 L/min for at least 60 minutes.</p>
+        <p>Possible high-use leak if flow ≥ 10 L/min for at least 20 minutes.</p>
+    </div>
+</section>
+
+{% endblock %}

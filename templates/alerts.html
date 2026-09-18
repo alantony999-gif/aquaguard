@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="hero compact">
+    <div>
+        <p class="eyebrow">LEAK DETECTION</p>
+        <h1>Possible leak events</h1>
+        <p>Review readings that triggered the prototype's leak-detection rules.</p>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Household</th>
+                    <th>Date/time</th>
+                    <th>Flow</th>
+                    <th>Duration</th>
+                    <th>Consumption</th>
+                    <th>Potential wastage</th>
+                    <th>Why flagged</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in readings %}
+                <tr>
+                    <td>{{ row.household }}</td>
+                    <td>{{ row.recorded_at }}</td>
+                    <td>{{ row.flow_rate }} L/min</td>
+                    <td>{{ row.duration }} min</td>
+                    <td>{{ row.consumption }} L</td>
+                    <td>{{ row.estimated_wastage }} L</td>
+                    <td>{{ row.reason }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7">No possible leak events detected.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+{% endblock %}
